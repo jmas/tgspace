@@ -46,7 +46,10 @@ const fetchStats = async (username) => {
 
   const [, avatar] = previewContent.match(/<img.+?src="(.+?)"/i) || [];
 
-  const type = await fetchTgUrlType(`https://t.me/${username}`);
+  const type = await getTgUrlTypeByContent(
+    `https://t.me/${username}`,
+    previewContent
+  );
 
   return {
     subscribers,
@@ -68,6 +71,24 @@ const parseTgUrl = (urlOrName) => {
 
 const fetchTgUrlType = async (url) => {
   const content = await fetchContent(url);
+
+  if (!content) {
+    return "";
+  }
+
+  if (url.toLowerCase().endsWith("bot")) {
+    return "bot";
+  }
+
+  if (content.includes("Preview channel")) {
+    return "channel";
+  }
+
+  return "group";
+};
+
+const getTgUrlTypeByContent = async (url, content) => {
+  // const content = await fetchContent(url);
 
   if (!content) {
     return "";
