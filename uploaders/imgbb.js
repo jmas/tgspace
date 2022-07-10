@@ -2,7 +2,7 @@ const FormData = require('form-data');
 const axios = require('axios');
 const fs = require('fs');
 const path = require("path");
-const { getFileExtension } = require('../utils');
+const { getFileExtension } = require('../utils/basic');
 
 const upload = async (filePath) => {
   const url = `https://imgbb.com/json`;

@@ -2,6 +2,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const axios = require("axios");
+const rateLimit = require("axios-rate-limit");
 
 const download = async (url) => {
   const _path = path.resolve(
@@ -51,8 +52,12 @@ const getDaysBetween = (date1, date2) => {
   return Math.ceil(difference / (1000 * 3600 * 24));
 };
 
-const fetchContent = async (url, headers = {}) => {
-  const response = await axios.get(url, {
+const fetchContent = async (url, headers = {}, maxRPS = 2) => {
+  const http = rateLimit(axios.create(), {
+    maxRPS,
+  });
+
+  const response = await http.get(url, {
     headers,
   });
 
@@ -60,10 +65,26 @@ const fetchContent = async (url, headers = {}) => {
     return response.data;
   }
 
-  return "";
+  return null;
+};
+
+const splitArrayToChunks = (inputArray, perChunk) => {
+  return inputArray.reduce((resultArray, item, index) => {
+    const chunkIndex = Math.floor(index / perChunk);
+
+    if (!resultArray[chunkIndex]) {
+      resultArray[chunkIndex] = []; // start a new chunk
+    }
+
+    resultArray[chunkIndex].push(item);
+
+    return resultArray;
+  }, []);
 };
 
 module.exports = {
+  splitArrayToChunks,
+  shuffleArray,
   getRandomInt,
   getFileExtension,
   isDaysAreEqual,

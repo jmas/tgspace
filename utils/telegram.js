@@ -1,9 +1,17 @@
-const { fetchContent, getDaysBetween } = require(".");
+const { fetchContent } = require("./basic");
 
 class ErrorNotAllowed extends Error {}
 class ErrorNotFound extends Error {}
 
-const fetchStats = async (username) => {
+const fetchAvatar = async (username) => {
+  const previewContent = await fetchContent(`https://t.me/${username}`);
+
+  const [, avatar] = previewContent.match(/<img.+?src="(.+?)"/i) || [];
+
+  return avatar;
+};
+
+const fetchInfo = async (username) => {
   if (!username) {
     throw new Error("tgId is required.");
   }
@@ -12,7 +20,7 @@ const fetchStats = async (username) => {
     `https://t.me/${username}/1?embed=1`
   );
 
-  const [, createdAt = ""] =
+  const [, birthdate = ""] =
     messageContentFirst.match(/datetime="(.+?)"/) || [];
 
   if (
@@ -22,7 +30,7 @@ const fetchStats = async (username) => {
     throw new ErrorNotAllowed("Not allowed");
   }
 
-  if (messageContentFirst.includes("not found") || !createdAt) {
+  if (messageContentFirst.includes("not found") || !birthdate) {
     throw new ErrorNotFound("Not found");
   }
 
@@ -44,10 +52,7 @@ const fetchStats = async (username) => {
       /<div.+?class="tgme_page_description".+?>(.+?)<\/div>/is
     ) || [];
 
-  const lifetime = getDaysBetween(new Date(), createdAt);
-  const rank = subscribers / lifetime;
-
-  const [, avatar] = previewContent.match(/<img.+?src="(.+?)"/i) || [];
+  // const [, avatar] = previewContent.match(/<img.+?src="(.+?)"/i) || [];
 
   const type = await getTgUrlTypeByContent(
     `https://t.me/${username}`,
@@ -56,14 +61,40 @@ const fetchStats = async (username) => {
 
   return {
     subscribers,
-    createdAt,
-    lifetime,
-    rank,
+    birthdate,
     name,
     description,
-    avatar,
     type,
   };
+};
+
+const fetchSubscribers = async (username) => {
+  const previewContent = await fetchContent(`https://t.me/${username}`);
+
+  const [subscribersMatch = ""] =
+    previewContent.match(/([\d ]+)(subscriber|subscribers|members|member)/gi) ||
+    [];
+  const subscribers = parseInt(
+    subscribersMatch.replace(/[^\d]/g, "") || "-1",
+    10
+  );
+
+  if (subscribers === -1) {
+    const previewContent = await fetchContent(`https://t.me/s/${username}`);
+
+    const [subscribersMatch = ""] =
+      previewContent.match(
+        /([\d ]+)(subscriber|subscribers|members|member)/gi
+      ) || [];
+    const subscribers = parseInt(
+      subscribersMatch.replace(/[^\d]/g, "") || "-1",
+      10
+    );
+
+    return subscribers;
+  }
+
+  return subscribers;
 };
 
 const parseTgUrl = (urlOrName) => {
@@ -109,9 +140,11 @@ const getTgUrlTypeByContent = async (url, content) => {
 };
 
 module.exports = {
-  fetchStats,
+  fetchInfo,
+  fetchAvatar,
   parseTgUrl,
-  getTgUrlType: fetchTgUrlType,
+  fetchSubscribers,
+  fetchTgUrlType,
   ErrorNotAllowed,
   ErrorNotFound,
 };
