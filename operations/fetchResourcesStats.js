@@ -2,6 +2,11 @@ const { fetchSubscribers } = require("../utils/telegram");
 const { getDaysBetween } = require("../utils/basic");
 
 const fetchResourcesStats = async (resources) => {
+  console.log(
+    `[fetchResourcesStats]:`,
+    resources.map(({ id, username }) => `${id} - ${username}`).join(", ")
+  );
+
   const result = [];
 
   for (let resource of resources) {
