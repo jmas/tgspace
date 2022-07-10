@@ -1,7 +1,4 @@
-const {
-  getResourcesForUpdateStats,
-  upsertResources,
-} = require("../utils/supabase");
+const { getResourcesForUpdateStats, upsert } = require("../utils/supabase");
 const { runProcesses } = require("../utils/process");
 
 const updateResourcesStats = async () => {
@@ -15,7 +12,22 @@ const updateResourcesStats = async () => {
     2
   );
 
-  await upsertResources(result);
+  await upsert("resource", result);
+
+  const updates = [];
+
+  for (const { id, subscribers } of result) {
+    if (subscribers !== undefined) {
+      updates.push({
+        resource_id: id,
+        date: new Date().toISOString().split("T").slice(0, 1)[0],
+        key: "subscribers",
+        value: subscribers,
+      });
+    }
+  }
+
+  await upsert("update", updates);
 
   return {
     result: result.length,

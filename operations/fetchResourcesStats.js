@@ -19,7 +19,7 @@ const fetchResourcesStats = async (resources) => {
       const rank = subscribers / lifetime;
 
       if (String(oldSubscribers) !== String(subscribers)) {
-        result.push({ id, lifetime, rank, updated_at: "now()" });
+        result.push({ id, lifetime, rank, subscribers, updated_at: "now()" });
 
         console.log(
           `[fetchResourcesStats] ${username}: update stats (${oldSubscribers} > ${subscribers})`

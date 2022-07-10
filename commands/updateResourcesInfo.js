@@ -1,7 +1,4 @@
-const {
-  getResourcesForUpdateInfo,
-  upsertResources,
-} = require("../utils/supabase");
+const { getResourcesForUpdateInfo, upsert } = require("../utils/supabase");
 const { runProcesses } = require("../utils/process");
 
 const updateResourcesInfo = async () => {
@@ -15,7 +12,7 @@ const updateResourcesInfo = async () => {
     2
   );
 
-  await upsertResources(result);
+  await upsert("resource", result);
 
   return {
     result: result.length,

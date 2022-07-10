@@ -8,7 +8,7 @@ const getResourcesForUpdateInfo = async (limit = 1000) => {
   const { data, error } = await supabase
     .from("resource")
     .select("id, username, status, updated_at")
-    // .not("status", "eq", "not_found")
+    .in("type", ["channel", "group"])
     .order("updated_at", { ascending: true })
     .limit(limit);
 
@@ -21,7 +21,7 @@ const getResourcesForUpdateStats = async (limit = 1000) => {
   const { data, error } = await supabase
     .from("resource")
     .select("id, username, subscribers, birthdate, updated_at")
-    // .eq("status", "set")
+    .in("type", ["channel", "group"])
     .order("updated_at", { ascending: true })
     .limit(limit);
 
@@ -30,8 +30,8 @@ const getResourcesForUpdateStats = async (limit = 1000) => {
   return data;
 };
 
-const upsertResources = async (resources) => {
-  const grouped = resources.reduce((grouped, resource) => {
+const upsert = async (table, items) => {
+  const itemsGrouped = items.reduce((grouped, resource) => {
     const keys = Object.keys(resource).sort().join(",");
     if (grouped[keys]) {
       grouped[keys].push(resource);
@@ -41,10 +41,10 @@ const upsertResources = async (resources) => {
     return grouped;
   }, {});
 
-  for (let [key, items] of Object.entries(grouped)) {
-    console.log(`[upsert] (${key}): begin`);
-    const { error } = await supabase.from("resource").upsert(items);
-    console.log(`[upsert] (${key}): end`, error);
+  for (let [key, items] of Object.entries(itemsGrouped)) {
+    console.log(`[upsert] ${table}: (${key}): begin`);
+    const { error } = await supabase.from(table).upsert(items);
+    console.log(`[upsert] ${table}: (${key}): end`, error);
   }
 };
 
@@ -52,5 +52,5 @@ module.exports = {
   supabase,
   getResourcesForUpdateInfo,
   getResourcesForUpdateStats,
-  upsertResources,
+  upsert,
 };
