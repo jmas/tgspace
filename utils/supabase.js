@@ -7,7 +7,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const getResourcesForUpdate = async (limit = 1000) => {
   const { data, error } = await supabase
     .from("resource")
-    .select("id, username, updated_at")
+    .select("id, username, status, updated_at")
     .not("status", "eq", "not_found")
     .order("updated_at", { ascending: true })
     .limit(limit);

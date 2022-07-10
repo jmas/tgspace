@@ -1,5 +1,8 @@
 const { fetchContent, getDaysBetween } = require(".");
 
+class ErrorNotAllowed extends Error {}
+class ErrorNotFound extends Error {}
+
 const fetchStats = async (username) => {
   if (!username) {
     throw new Error("tgId is required.");
@@ -9,12 +12,18 @@ const fetchStats = async (username) => {
     `https://t.me/${username}/1?embed=1`
   );
 
+  const [, createdAt = ""] =
+    messageContentFirst.match(/datetime="(.+?)"/) || [];
+
   if (
-    messageContentFirst.includes("not found") ||
     messageContentFirst.includes("can’t be displayed") ||
     messageContentFirst.includes("unavailable")
   ) {
-    throw new Error("Not found");
+    throw new ErrorNotAllowed("Not allowed");
+  }
+
+  if (messageContentFirst.includes("not found") || !createdAt) {
+    throw new ErrorNotFound("Not found");
   }
 
   const previewContent = await fetchContent(`https://t.me/${username}`);
@@ -26,8 +35,6 @@ const fetchStats = async (username) => {
     subscribersMatch.replace(/[^\d]/g, "") || "0",
     10
   );
-  const [, createdAt = ""] =
-    messageContentFirst.match(/datetime="(.+?)"/) || [];
   const [, name = ""] =
     previewContent.match(
       /<div.+?class="tgme_page_title".+?>.+?<.+?>(.+?)<\/.+?><\/div>/is
@@ -36,10 +43,6 @@ const fetchStats = async (username) => {
     previewContent.match(
       /<div.+?class="tgme_page_description".+?>(.+?)<\/div>/is
     ) || [];
-
-  if (!createdAt) {
-    throw new Error("Not found");
-  }
 
   const lifetime = getDaysBetween(new Date(), createdAt);
   const rank = subscribers / lifetime;
@@ -109,4 +112,6 @@ module.exports = {
   fetchStats,
   parseTgUrl,
   getTgUrlType: fetchTgUrlType,
+  ErrorNotAllowed,
+  ErrorNotFound,
 };

@@ -1,4 +1,4 @@
-const { fetchStats } = require("./utils/tg");
+const { fetchStats, ErrorNotAllowed, ErrorNotFound } = require("./utils/tg");
 const { getResourcesForUpdate, upsertResources } = require("./utils/supabase");
 
 const updateResourcesStats = async () => {
@@ -11,7 +11,7 @@ const updateResourcesStats = async () => {
   const resourcesReadyForUpdate = [];
   const resourcesForStatusUpdate = [];
 
-  for (let { id, username } of resources) {
+  for (let { id, username, status } of resources) {
     try {
       const stats = await fetchStats(username);
       const {
@@ -25,7 +25,7 @@ const updateResourcesStats = async () => {
         type,
       } = stats;
 
-      console.log(`pushed (${username})`);
+      console.log(`pushed (${username}) ${status} > set`);
 
       resourcesReadyForUpdate.push({
         id,
@@ -40,11 +40,16 @@ const updateResourcesStats = async () => {
         status: "set",
       });
     } catch (error) {
-      console.log(`error (${username})`, error);
-      resourcesForStatusUpdate.push({
-        id,
-        status: "not_found",
-      });
+      if (error instanceof ErrorNotFound) {
+        console.log(`error (${username}) ${status} > not_found`, error);
+
+        resourcesForStatusUpdate.push({
+          id,
+          status: error instanceof ErrorNotAllowed ? status : "not_found",
+        });
+      } else {
+        console.log(`error (${username}) ${status}`, error);
+      }
     }
   }
 
