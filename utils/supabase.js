@@ -9,7 +9,6 @@ const getResourcesForUpdateInfo = async (limit = 1000) => {
     .from("resource")
     .select("id, username, status, updated_at")
     .in("type", ["channel", "group"])
-    .eq("type", "set")
     .order("info_updated_at", { ascending: true })
     .limit(limit);
 
