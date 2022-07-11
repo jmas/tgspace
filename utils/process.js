@@ -21,7 +21,7 @@ const runProcesses = async (path, items, childsNum = SYSTEM_CPU_NUM) => {
 
       console.log(`[parent] send to child ${i}`);
 
-      child.send(chunks[i]);
+      child.send(chunks[i] || []);
 
       child.on("message", async (message) => {
         console.log("[parent] received message from child:", message.length);
@@ -52,7 +52,7 @@ const createProcess = (fn) => {
       const result = await fn(message);
       console.log("[child] send result to parent", result.length);
 
-      process.send(result);
+      process.send(result || []);
     } catch (error) {
       console.log("[child] error");
     }

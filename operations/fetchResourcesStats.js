@@ -19,7 +19,13 @@ const fetchResourcesStats = async (resources) => {
       const rank = subscribers / lifetime;
 
       if (String(oldSubscribers) !== String(subscribers)) {
-        result.push({ id, lifetime, rank, subscribers, updated_at: "now()" });
+        result.push({
+          id,
+          lifetime,
+          rank,
+          subscribers,
+          stats_updated_at: "now()",
+        });
 
         console.log(
           `[fetchResourcesStats] ${username}: update stats (${oldSubscribers} > ${subscribers})`
@@ -29,14 +35,14 @@ const fetchResourcesStats = async (resources) => {
           `[fetchResourcesStats] ${username}: skip stats (count the same) ${oldSubscribers} ${subscribers}`
         );
 
-        result.push({ id, updated_at: "now()" });
+        result.push({ id, stats_updated_at: "now()" });
       }
     } else {
       console.log(
         `[fetchResourcesStats] ${username}: skip stats (can't fetch ${subscribers})`
       );
 
-      result.push({ id, updated_at: "now()" });
+      result.push({ id, stats_updated_at: "now()" });
     }
   }
 

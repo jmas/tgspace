@@ -22,10 +22,10 @@ const fetchResourcesInfo = async (resources) => {
         birthdate,
         type,
         status: "set",
-        updated_at: "now()",
+        info_updated_at: "now()",
       });
     } catch (error) {
-      result.push({ id, updated_at: "now()" });
+      result.push({ id, info_updated_at: "now()" });
 
       if (error instanceof ErrorNotFound) {
         console.log(

@@ -9,7 +9,8 @@ const getResourcesForUpdateInfo = async (limit = 1000) => {
     .from("resource")
     .select("id, username, status, updated_at")
     .in("type", ["channel", "group"])
-    .order("updated_at", { ascending: true })
+    .eq("type", "set")
+    .order("info_updated_at", { ascending: true })
     .limit(limit);
 
   console.log("[getResourcesForUpdateInfo] error:", error);
@@ -22,7 +23,7 @@ const getResourcesForUpdateStats = async (limit = 1000) => {
     .from("resource")
     .select("id, username, subscribers, birthdate, updated_at")
     .in("type", ["channel", "group"])
-    .order("updated_at", { ascending: true })
+    .order("stats_updated_at", { ascending: true })
     .limit(limit);
 
   console.log("[getResourcesForUpdateStats] error:", error);
