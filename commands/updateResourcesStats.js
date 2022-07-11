@@ -1,4 +1,5 @@
-const { getResourcesForUpdateStats, upsert } = require("../utils/supabase");
+const { upsert } = require("../utils/supabase");
+const { getResourcesForUpdateStats } = require("../utils/queries");
 const { runProcesses } = require("../utils/process");
 
 const updateResourcesStats = async () => {
