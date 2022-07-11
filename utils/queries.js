@@ -3,7 +3,7 @@ const { supabase } = require("./supabase");
 const getResourcesForUpdateInfo = async (limit = 1000) => {
   const { data, error } = await supabase
     .from("resource")
-    .select("id, username, status, updated_at")
+    .select("id, username, status")
     .in("type", ["channel", "group"])
     .order("info_updated_at", { ascending: true })
     .limit(limit);
@@ -16,7 +16,7 @@ const getResourcesForUpdateInfo = async (limit = 1000) => {
 const getResourcesForUpdateStats = async (limit = 1000) => {
   const { data, error } = await supabase
     .from("resource")
-    .select("id, username, subscribers, birthdate, updated_at")
+    .select("id, username, subscribers, birthdate")
     .in("type", ["channel", "group"])
     .order("stats_updated_at", { ascending: true })
     .limit(limit);
