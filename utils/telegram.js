@@ -43,13 +43,13 @@ const fetchInfo = async (username) => {
     subscribersMatch.replace(/[^\d]/g, "") || "0",
     10
   );
-  const [, name = ""] =
+  const [, _name = ""] =
     previewContent.match(
       /<div.+?class="tgme_page_title".+?>.+?<.+?>(.+?)<\/.+?><\/div>/is
     ) || [];
-  const [, description = ""] =
+  const [, _description = ""] =
     previewContent.match(
-      /<div.+?class="tgme_page_description".+?>(.+?)<\/div>/is
+      /<div.+?class="tgme_page_description">(.+?)<\/div>/is
     ) || [];
 
   // const [, avatar] = previewContent.match(/<img.+?src="(.+?)"/i) || [];
@@ -58,6 +58,14 @@ const fetchInfo = async (username) => {
     `https://t.me/${username}`,
     previewContent
   );
+
+  const name = _name.trim();
+
+  const description = _description
+    .trim()
+    .startsWith("If you have <strong>Telegram</strong>, you can contact")
+    ? ""
+    : _description.trim();
 
   return {
     subscribers,

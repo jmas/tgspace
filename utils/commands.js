@@ -1,13 +1,22 @@
-const runCommand = async (commands, commandName) => {
-  const commandTarget = commands[commandName];
+const fs = require("fs");
+const path = require("path");
 
-  if (commandTarget) {
-    console.log(`[runCommand] Start command: ${commandName}`);
-    console.log(`[runCommand] Command result: `, await commandTarget());
-    console.log(`[runCommand] End command: ${commandName}`);
-  } else {
-    console.log(`[runCommand] Command is not found: ${commandName}`);
+const runCommandFromPath = async (_path, name) => {
+  const files = fs.readdirSync(_path);
+
+  const names = files.map((file) => file.replace(".js", ""));
+
+  if (!names.includes(name)) {
+    throw new Error(`Command ${name} is not found.`);
+  }
+
+  const target = require(path.resolve(`${_path}/${name}.js`));
+
+  if (target) {
+    console.log(`[runCommand] Start command: ${name}`);
+    console.log(`[runCommand] Command result: `, await target());
+    console.log(`[runCommand] End command: ${name}`);
   }
 };
 
-module.exports = { runCommand };
+module.exports = { runCommandFromPath };

@@ -1,2 +1,5 @@
 node_modules
 test-*
+utils/keys/*
+utils/sheet.js
+commands/addRow.js
