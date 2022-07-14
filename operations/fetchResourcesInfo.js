@@ -1,4 +1,4 @@
-const { fetchInfo: fetchStats, ErrorNotFound } = require("../utils/telegram");
+const { fetchInfo, ErrorNotFound } = require("../utils/telegram");
 
 const fetchResourcesInfo = async (resources) => {
   console.log(
@@ -10,7 +10,7 @@ const fetchResourcesInfo = async (resources) => {
 
   for (let { id, username, status } of resources) {
     try {
-      const stats = await fetchStats(username);
+      const stats = await fetchInfo(username);
       const { name, description, birthdate, type } = stats;
 
       console.log(`[fetchResourcesInfo] pushed (${username}) ${status} > set`);

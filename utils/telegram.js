@@ -49,7 +49,7 @@ const fetchInfo = async (username) => {
     ) || [];
   const [, _description = ""] =
     previewContent.match(
-      /<div.+?class="tgme_page_description">(.+?)<\/div>/is
+      /<div.+?class="tgme_page_description".*?>(.+?)<\/div>/is
     ) || [];
 
   // const [, avatar] = previewContent.match(/<img.+?src="(.+?)"/i) || [];
