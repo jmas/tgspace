@@ -13,8 +13,6 @@ const updateResourcesAvatars = async () => {
     2
   );
 
-  console.log(result);
-
   await upsert("resource", result);
 
   return {
