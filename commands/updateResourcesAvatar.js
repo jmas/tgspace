@@ -3,7 +3,7 @@ const { upsert } = require("../utils/supabase");
 const { getResourcesForUpdateAvatar } = require("../utils/queries");
 
 const updateResourcesAvatars = async () => {
-  const updateLimit = parseInt(process.env.UPDATE_LIMIT || "1000", 10);
+  const updateLimit = 500; // parseInt(process.env.UPDATE_LIMIT || "1000", 10);
 
   const resources = await getResourcesForUpdateAvatar(updateLimit);
 
