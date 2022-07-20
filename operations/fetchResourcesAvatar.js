@@ -24,7 +24,7 @@ const fetchResourcesAvatar = async (resources) => {
       if (_avatar) {
         const path = await download(_avatar);
         const avatar = await upload(path);
-        fs.rmSync(path);
+        fs.unlinkSync(path);
 
         result.push({
           id,
