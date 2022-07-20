@@ -3,3 +3,4 @@ test-*
 utils/keys/*
 utils/sheet.js
 commands/addRow.js
+web/*

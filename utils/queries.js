@@ -1,4 +1,5 @@
 const { supabase } = require("./supabase");
+const subMonths = require("date-fns/subMonths");
 
 const getResourcesForUpdateInfo = async (limit = 1000) => {
   const { data, error } = await supabase
@@ -17,6 +18,10 @@ const getResourcesForUpdateAvatar = async (limit = 1000) => {
     .from("resource")
     .select("id, username")
     .order("avatar_updated_at", { ascending: true })
+    .lte(
+      "avatar_updated_at",
+      subMonths(new Date(), 4).toISOString().split("T")[0]
+    )
     .limit(limit);
 
   console.log("[getResourcesForUpdateAvatar] error:", error);
