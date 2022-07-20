@@ -6,9 +6,13 @@ class ErrorNotFound extends Error {}
 const fetchAvatar = async (username) => {
   const previewContent = await fetchContent(`https://t.me/${username}`);
 
-  const [, avatar] = previewContent.match(/<img.+?src="(.+?)"/i) || [];
+  if (previewContent) {
+    const [, avatar] = previewContent.match(/<img.+?src="(.+?)"/i) || [];
 
-  return avatar;
+    return avatar;
+  }
+
+  return undefined;
 };
 
 const fetchInfo = async (username) => {

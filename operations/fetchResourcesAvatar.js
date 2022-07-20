@@ -18,9 +18,9 @@ const fetchResourcesAvatar = async (resources) => {
   for (let resource of resources) {
     const { id, username } = resource;
 
-    const _avatar = await fetchAvatar(username);
-
     try {
+      const _avatar = await fetchAvatar(username);
+
       if (_avatar) {
         const path = await download(_avatar);
         const avatar = await upload(path);
@@ -41,7 +41,9 @@ const fetchResourcesAvatar = async (resources) => {
         result.push({ id, avatar_updated_at: "now()" });
       }
     } catch (error) {
-      console.log(`[fetchResourcesAvatar] ${username}: erorr`, error);
+      console.log(
+        `[fetchResourcesAvatar] ${username}: error: ${error.message}`
+      );
     }
   }
 

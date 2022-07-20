@@ -65,7 +65,7 @@ const fetchContent = async (url, headers = {}, maxRPS = 2) => {
     return response.data;
   }
 
-  return null;
+  return undefined;
 };
 
 const splitArrayToChunks = (inputArray, perChunk) => {
