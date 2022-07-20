@@ -2,6 +2,7 @@ const { fetchAvatar } = require("../utils/telegram");
 const { upload: uploadZippyshare } = require("../uploaders/zippyshare");
 const { upload: uploadImgbb } = require("../uploaders/imgbb");
 const { download } = require("../utils/basic");
+const fs = require("fs");
 
 const uploaders = [uploadImgbb]; // uploadZippyshare
 const upload = uploaders.sort(() => 0.5 - Math.random())[0];
@@ -19,20 +20,28 @@ const fetchResourcesAvatar = async (resources) => {
 
     const _avatar = await fetchAvatar(username);
 
-    if (_avatar) {
-      const avatar = await upload(await download(_avatar));
+    try {
+      if (_avatar) {
+        const path = await download(_avatar);
+        const avatar = await upload(path);
+        fs.rmSync(path);
 
-      result.push({
-        id,
-        avatar,
-        avatar_updated_at: "now()",
-      });
+        result.push({
+          id,
+          avatar,
+          avatar_updated_at: "now()",
+        });
 
-      console.log(`[fetchResourcesAvatar] ${username}: avatar exists`);
-    } else {
-      console.log(`[fetchResourcesAvatar] ${username}: avatar doesn't exists`);
+        console.log(`[fetchResourcesAvatar] ${username}: avatar exists`);
+      } else {
+        console.log(
+          `[fetchResourcesAvatar] ${username}: avatar doesn't exists`
+        );
 
-      result.push({ id, avatar_updated_at: "now()" });
+        result.push({ id, avatar_updated_at: "now()" });
+      }
+    } catch (error) {
+      console.log(`[fetchResourcesAvatar] ${username}: erorr`, error);
     }
   }
 
