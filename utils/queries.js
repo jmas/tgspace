@@ -1,5 +1,5 @@
 const { supabase } = require("./supabase");
-const subMonths = require("date-fns/subMonths");
+const subWeeks = require("date-fns/subWeeks");
 
 const getResourcesForUpdateInfo = async (limit = 1000) => {
   const { data, error } = await supabase
@@ -20,7 +20,7 @@ const getResourcesForUpdateAvatar = async (limit = 1000) => {
     .order("avatar_updated_at", { ascending: true })
     .lte(
       "avatar_updated_at",
-      subMonths(new Date(), 4).toISOString().split("T")[0]
+      subWeeks(new Date(), 1).toISOString().split("T")[0]
     )
     .limit(limit);
 
