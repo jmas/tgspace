@@ -1,5 +1,19 @@
 const { supabase } = require("./supabase");
-const subWeeks = require("date-fns/subWeeks");
+const { subWeeks, subDays, formatISO } = require("date-fns");
+
+const cleanupUpdates = async () => {
+  const date = formatISO(subDays(new Date(), 14), { representation: "date" });
+
+  console.log("[cleanupUpdates] date:", date);
+
+  const { data, error, count } = await supabase.rpc("cleanup");
+
+  console.log("[cleanupUpdates] data:", data);
+  console.log("[cleanupUpdates] count:", count);
+  console.log("[cleanupUpdates] error:", error);
+
+  return data;
+};
 
 const getResourcesForUpdateInfo = async (limit = 1000) => {
   const { data, error } = await supabase
@@ -47,4 +61,5 @@ module.exports = {
   getResourcesForUpdateInfo,
   getResourcesForUpdateStats,
   getResourcesForUpdateAvatar,
+  cleanupUpdates,
 };
